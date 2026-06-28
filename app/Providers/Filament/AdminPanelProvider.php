@@ -27,7 +27,9 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->login()
+            ->brandName('TechQueen')
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -39,7 +41,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 AccountWidget::class,
-                FilamentInfoWidget::class,
+                \App\Filament\Widgets\DeliveryAndWorkloadReminderWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -54,6 +56,29 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::USER_MENU_BEFORE,
+                fn (): string => \Illuminate\Support\Facades\Blade::render('@livewire(\'hide-prices-toggle\')'),
+            )
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::BODY_END,
+                fn (): string => '<script>
+                    window.addEventListener("keydown", function (e) {
+                        if (["INPUT", "SELECT", "TEXTAREA"].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) {
+                            return;
+                        }
+                        if (e.metaKey || e.ctrlKey || e.altKey || e.key.length !== 1) {
+                            return;
+                        }
+                        const searchInput = document.querySelector("input[type=\'search\']") || 
+                                            document.querySelector(".fi-ta-search-input input") || 
+                                            document.querySelector(".fi-ta-search input");
+                        if (searchInput) {
+                            searchInput.focus();
+                        }
+                    });
+                </script>'
+            );
     }
 }

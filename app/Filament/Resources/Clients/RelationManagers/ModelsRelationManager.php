@@ -20,14 +20,19 @@ class ModelsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('piece_name')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('status')
-                    ->badge(),
+                Tables\Columns\ViewColumn::make('status')
+                    ->label('Status')
+                    ->view('filament.tables.columns.status-dropdown')
+                    ->sortable()
+                    ->searchable(),
 
                 Tables\Columns\TextColumn::make('price')
-                    ->money('EGP'),
+                    ->state(fn ($record) => session('hide_prices', false) ? '***' : $record->price)
+                    ->formatStateUsing(fn ($state) => $state === '***' ? '***' : number_format((float)$state, 0) . ' EGP'),
 
                 Tables\Columns\TextColumn::make('deposit')
-                    ->money('EGP'),
+                    ->state(fn ($record) => session('hide_prices', false) ? '***' : $record->deposit)
+                    ->formatStateUsing(fn ($state) => $state === '***' ? '***' : number_format((float)$state, 0) . ' EGP'),
 
                 Tables\Columns\TextColumn::make('receiving_date')
                     ->date(),
@@ -42,11 +47,21 @@ class ModelsRelationManager extends RelationManager
                 Tables\Filters\SelectFilter::make('status')
                     ->options([
                         'in_progress' => 'In Progress',
-                        'completed' => 'Completed',
-                        'delayed' => 'Delayed',
                         'canceled' => 'Canceled',
+                        'on_hold' => 'On Hold',
+                        'finished_unpaid' => 'Finished but Unpaid',
+                        'paid_unfinished' => 'Paid but Not Finished',
+                        'finished_paid' => 'Finished and Paid',
                     ])
 
             ]);
+    }
+
+    public function updateStatus($recordId, string $status): void
+    {
+        $record = \App\Models\ClientModel::find($recordId);
+        if ($record) {
+            $record->update(['status' => $status]);
+        }
     }
 }

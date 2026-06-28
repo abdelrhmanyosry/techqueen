@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
 {
+    protected $guarded = [];
+
     public function models()
     {
         return $this->hasMany(ClientModel::class);

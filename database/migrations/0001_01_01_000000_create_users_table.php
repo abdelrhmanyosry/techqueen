@@ -21,6 +21,14 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        \Illuminate\Support\Facades\DB::table('users')->insert([
+            'name' => 'Admin',
+            'email' => 'abdelrhmanyosrymokhtar@gmail.com',
+            'password' => \Illuminate\Support\Facades\Hash::make('test1234'),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');

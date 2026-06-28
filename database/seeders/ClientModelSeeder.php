@@ -12,17 +12,22 @@ class ClientModelSeeder extends Seeder
     {
         $statuses = [
             'in_progress',
-            'completed',
-            'delayed',
             'canceled',
+            'on_hold',
+            'finished_unpaid',
+            'paid_unfinished',
+            'finished_paid',
         ];
 
-        Client::all()->each(function ($client) use ($statuses) {
+        $employees = \App\Models\Employee::all();
+
+        Client::all()->each(function ($client) use ($statuses, $employees) {
 
             for ($i = 1; $i <= 5; $i++) {
 
                 ClientModel::create([
                     'client_id' => $client->id,
+                    'employee_id' => rand(0, 2) ? $employees->random()->id : null,
 
                     'piece_name' => "Piece {$i}",
 

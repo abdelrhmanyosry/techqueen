@@ -18,6 +18,13 @@ return new class extends Migration
             ->constrained()
             ->cascadeOnDelete();
 
+        $table->foreignId('employee_id')
+            ->nullable()
+            ->constrained()
+            ->nullOnDelete();
+
+        $table->boolean('employee_paid')->default(false);
+
         $table->string('piece_name');
 
         $table->text('notes')->nullable();
@@ -28,10 +35,10 @@ return new class extends Migration
 
         $table->date('delivery_date');
 
-        $table->decimal('deposit',10,2)
+        $table->integer('deposit')
             ->default(0);
 
-        $table->decimal('price',10,2);
+        $table->integer('price');
 
         $table->string('status')
             ->default('in_progress');

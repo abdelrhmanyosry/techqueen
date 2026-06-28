@@ -20,9 +20,17 @@ class ClientModelResource extends Resource
 {
     protected static ?string $model = ClientModel::class;
 
+    protected static ?string $modelLabel = 'Model';
+
+    protected static ?string $pluralModelLabel = 'Models';
+
+    protected static ?string $navigationLabel = 'Models';
+
+    protected static ?string $slug = 'models';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static ?string $recordTitleAttribute = 'Models';
+    protected static ?string $recordTitleAttribute = 'piece_name';
 
     public static function form(Schema $schema): Schema
     {
