@@ -20,14 +20,23 @@
         <!-- Left Side: Deliveries Reminder -->
         <div class="p-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm flex flex-col justify-between">
             <div>
-                <div class="flex items-center gap-3 border-b border-gray-100 dark:border-gray-800 pb-3 mb-4">
-                    <span class="p-2 rounded-lg bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400">
-                        <x-heroicon-o-clock class="w-6 h-6" style="width: 24px; height: 24px;" />
-                    </span>
-                    <div>
-                        <h3 class="text-base font-bold text-gray-900 dark:text-white">Upcoming Deliveries Reminder</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Active models sorted by nearest delivery date</p>
+                <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3 mb-4">
+                    <div class="flex items-center gap-3">
+                        <span class="p-2 rounded-lg bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400">
+                            <x-heroicon-o-clock class="w-6 h-6" style="width: 24px; height: 24px;" />
+                        </span>
+                        <div>
+                            <h3 class="text-base font-bold text-gray-900 dark:text-white">Upcoming Deliveries Reminder</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Active models sorted by nearest delivery date</p>
+                        </div>
                     </div>
+                    <a 
+                        href="{{ route('filament.admin.resources.models.create') }}" 
+                        class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-white bg-primary-600 hover:bg-primary-500 rounded-lg shadow-sm transition duration-200"
+                    >
+                        <x-heroicon-m-plus class="w-4 h-4" style="width: 16px; height: 16px;" />
+                        <span>Create Model</span>
+                    </a>
                 </div>
 
                 <div class="space-y-3">
