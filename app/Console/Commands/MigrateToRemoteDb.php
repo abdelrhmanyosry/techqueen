@@ -61,8 +61,14 @@ class MigrateToRemoteDb extends Command
         }
 
         // 4. Run migrations on the remote database to create the schema
-        $this->info('Running migrations on remote database to create clean tables...');
-        Artisan::call('migrate:refresh', ['--force' => true]);
+        $this->info('Wiping remote database...');
+        $wipeExitCode = Artisan::call('db:wipe', ['--database' => $targetConnection, '--force' => true]);
+        $this->info("db:wipe exit code: {$wipeExitCode}");
+        $this->info(Artisan::output());
+
+        $this->info('Running migrations to create clean tables...');
+        $migrateExitCode = Artisan::call('migrate', ['--database' => $targetConnection, '--force' => true]);
+        $this->info("migrate exit code: {$migrateExitCode}");
         $this->info(Artisan::output());
 
         // 5. Get list of tables from SQLite
@@ -70,6 +76,27 @@ class MigrateToRemoteDb extends Command
             ->select("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'");
         
         $tableNames = array_map(fn($t) => $t->name, $tables);
+
+        // Sort tables so parent tables are created/seeded before child tables to satisfy constraints
+        $tableOrder = [
+            'users',
+            'employees',
+            'clients',
+            'sessions',
+            'client_models',
+        ];
+        
+        $sortedTableNames = [];
+        foreach ($tableOrder as $orderedTable) {
+            if (in_array($orderedTable, $tableNames)) {
+                $sortedTableNames[] = $orderedTable;
+            }
+        }
+        foreach ($tableNames as $tableName) {
+            if (!in_array($tableName, $sortedTableNames)) {
+                $sortedTableNames[] = $tableName;
+            }
+        }
 
         // Exclude migrations and sessions/cache tables that are automatically handled or shouldn't be copied
         $excludeTables = ['migrations'];
@@ -80,12 +107,15 @@ class MigrateToRemoteDb extends Command
             DB::connection($targetConnection)->statement('SET FOREIGN_KEY_CHECKS=0;');
         }
 
-        foreach ($tableNames as $tableName) {
+        foreach ($sortedTableNames as $tableName) {
             if (in_array($tableName, $excludeTables)) {
                 continue;
             }
 
             $this->info("Copying table: {$tableName}...");
+
+            // Clear target table first to avoid duplicate keys (e.g. from migrations)
+            DB::connection($targetConnection)->table($tableName)->delete();
 
             // Fetch records from SQLite
             $records = DB::connection('sqlite_source')->table($tableName)->get();
