@@ -5,5 +5,5 @@ echo ===================================================
 echo   Starting TechQueen Development Server...
 echo ===================================================
 echo.
-npx concurrently -c "#93c5fd,#c4b5fd,#fdba74" "php artisan serve" "php artisan queue:listen --tries=1 --timeout=0" "npm run dev" --names=server,queue,vite --kill-others
+npx concurrently -c "#93c5fd,#c4b5fd,#fd97af,#fdba74" "php artisan serve" "php artisan queue:listen --tries=1 --timeout=0" "php artisan schedule:work" "npm run dev" --names=server,queue,backup,vite --kill-others
 pause
