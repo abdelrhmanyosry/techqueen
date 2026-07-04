@@ -59,7 +59,12 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->renderHook(
                 \Filament\View\PanelsRenderHook::USER_MENU_BEFORE,
-                fn (): string => \Illuminate\Support\Facades\Blade::render('@livewire(\'hide-prices-toggle\')'),
+                fn (): string => \Illuminate\Support\Facades\Blade::render('
+                    <div class="flex items-center gap-x-2">
+                        @livewire(\'sync-from-remote-button\')
+                        @livewire(\'hide-prices-toggle\')
+                    </div>
+                '),
             )
             ->renderHook(
                 \Filament\View\PanelsRenderHook::BODY_END,

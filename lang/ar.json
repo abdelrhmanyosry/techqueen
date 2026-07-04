@@ -195,5 +195,9 @@
     "Start Import": "بدء الاستيراد",
     "Normal View": "العرض العادي",
     "Wide View": "العرض الكامل",
-    "Full Screen": "ملء الشاشة"
+    "Full Screen": "ملء الشاشة",
+    "Sync data from remote database": "مزامنة البيانات من السحابة",
+    "Are you sure you want to download remote data? This will overwrite your local changes.": "هل أنت متأكد من رغبتك في تنزيل البيانات من السحابة؟ هذا الإجراء سيقوم بالكتابة فوق البيانات المحلية الحالية.",
+    "Data synced successfully!": "تمت المزامنة وتنزيل البيانات بنجاح!",
+    "Database sync failed!": "فشلت مزامنة البيانات!"
 }

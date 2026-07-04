@@ -29,6 +29,9 @@ echo.
 :: Launch the browser automatically on the server computer
 start http://localhost:8000/admin
 
+:: Start PHP artisan scheduler in the background
+start /B php artisan schedule:work
+
 :: Start PHP artisan server bound to 0.0.0.0 (all network interfaces)
 php artisan serve --host=0.0.0.0 --port=8000
 
