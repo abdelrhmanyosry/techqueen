@@ -20,13 +20,17 @@ class ClientModelResource extends Resource
 {
     protected static ?string $model = ClientModel::class;
 
-    protected static ?string $modelLabel = 'Model';
-
-    protected static ?string $pluralModelLabel = 'Models';
-
-    protected static ?string $navigationLabel = 'Models';
-
     protected static ?string $slug = 'models';
+
+    public static function getModelLabel(): string
+    {
+        return __('Model');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Models');
+    }
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 

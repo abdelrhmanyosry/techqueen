@@ -11,6 +11,8 @@ use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Table;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Actions\BulkAction;
+use Filament\Forms\Components\Select;
 
 class ClientModelsTable
 {
@@ -18,19 +20,24 @@ class ClientModelsTable
     {
         return $table
             ->columns([
-                TextColumn::make('client.name')
-                    ->label('Client')
+                 TextColumn::make('client.name')
+                    ->label(__('Client'))
+                    ->wrap()
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('employee.name')
-                    ->label('Employee')
-                    ->placeholder('Admin / Self')
+                    ->label(__('Employee'))
+                    ->placeholder(__('Admin / Self'))
+                    ->wrap()
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('piece_name')
+                    ->label(__('Piece name'))
+                    ->wrap()
                     ->searchable(),
                 TextColumn::make('type')
-                    ->label('Type')
+                    ->label(__('Type'))
                     ->badge()
                     ->color(fn (?string $state): string => match ($state) {
                         'scan' => 'info',
@@ -39,36 +46,43 @@ class ClientModelsTable
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (?string $state) => match ($state) {
-                        'scan' => 'Scan',
-                        'drawing' => 'Drawing',
-                        'scan_drawing' => 'Scan + Drawing',
+                        'scan' => __('Scan'),
+                        'drawing' => __('Drawing'),
+                        'scan_drawing' => __('Scan + Drawing'),
                         default => '-',
                     })
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('receiving_date')
+                    ->label(__('Receiving date'))
                     ->date()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('delivery_date')
+                    ->label(__('Delivery date'))
                     ->date()
                     ->sortable(),
                 TextColumn::make('deposit')
+                    ->label(__('Deposit'))
                     ->state(fn ($record) => session('hide_prices', false) ? '***' : $record->deposit)
-                    ->formatStateUsing(fn ($state) => $state === '***' ? '***' : number_format((float)$state, 0) . ' EGP')
-                    ->sortable(),
+                    ->formatStateUsing(fn ($state) => $state === '***' ? '***' : number_format((float)$state, 0) . ' ' . __('EGP'))
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('price')
+                    ->label(__('Price'))
                     ->state(fn ($record) => session('hide_prices', false) ? '***' : $record->price)
-                    ->formatStateUsing(fn ($state) => $state === '***' ? '***' : number_format((float)$state, 0) . ' EGP')
+                    ->formatStateUsing(fn ($state) => $state === '***' ? '***' : number_format((float)$state, 0) . ' ' . __('EGP'))
                     ->sortable(),
                 ViewColumn::make('status')
-                    ->label('Status')
+                    ->label(__('Status'))
                     ->view('filament.tables.columns.status-dropdown')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('completed_at')
+                    ->label(__('Completed at'))
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->date()
                     ->sortable()
@@ -80,10 +94,10 @@ class ClientModelsTable
             ])
             ->filters([
                 SelectFilter::make('employee')
-                    ->label('Employee / Assignee')
+                    ->label(__('Employee / Assignee'))
                     ->options(function () {
                         $options = \App\Models\Employee::pluck('name', 'id')->toArray();
-                        return ['admin' => 'Admin / Self'] + $options;
+                        return ['admin' => __('Admin / Self')] + $options;
                     })
                     ->query(function (\Illuminate\Database\Eloquent\Builder $query, array $data) {
                         if (empty($data['value'])) {
@@ -96,17 +110,17 @@ class ClientModelsTable
                             $query->where('employee_id', $data['value']);
                         }
                     })
-                    ->placeholder('All Assignees')
+                    ->placeholder(__('All Assignees'))
                     ->searchable()
                     ->preload(),
                 SelectFilter::make('type')
-                    ->label('Model Type')
+                    ->label(__('Model Type'))
                     ->options([
-                        'scan' => 'Scan',
-                        'drawing' => 'Drawing',
-                        'scan_drawing' => 'Scan + Drawing',
+                        'scan' => __('Scan'),
+                        'drawing' => __('Drawing'),
+                        'scan_drawing' => __('Scan + Drawing'),
                     ])
-                    ->placeholder('All Types'),
+                    ->placeholder(__('All Types')),
             ])
             ->recordActions([
                 ViewAction::make(),
@@ -114,8 +128,88 @@ class ClientModelsTable
             ])
             ->recordUrl(null)
             ->toolbarActions([
+                \Filament\Actions\Action::make('fullscreen')
+                    ->label(__('Full Screen'))
+                    ->icon('heroicon-m-arrows-pointing-out')
+                    ->color('gray')
+                    ->extraAttributes([
+                        'x-on:click.prevent.stop' => "document.body.classList.toggle('table-fullscreen-active')",
+                    ]),
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    
+                    BulkAction::make('bulkUpdateStatus')
+                        ->label(__('Update Status'))
+                        ->icon('heroicon-o-check-circle')
+                        ->color('warning')
+                        ->form([
+                            Select::make('status')
+                                ->label(__('Status'))
+                                ->options([
+                                    'in_progress' => __('In Progress'),
+                                    'canceled' => __('Canceled'),
+                                    'on_hold' => __('On Hold'),
+                                    'finished_unpaid' => __('Finished but Unpaid'),
+                                    'paid_unfinished' => __('Paid but Not Finished'),
+                                    'finished_paid' => __('Finished and Paid'),
+                                ])
+                                ->required(),
+                        ])
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records, array $data): void {
+                            foreach ($records as $record) {
+                                $record->update([
+                                    'status' => $data['status'],
+                                    'completed_at' => in_array($data['status'], ['finished_paid', 'completed', 'finished_unpaid']) ? now() : null,
+                                ]);
+                            }
+                        })
+                        ->deselectRecordsAfterCompletion(),
+
+                    BulkAction::make('bulkUpdateType')
+                        ->label(__('Update Model Type'))
+                        ->icon('heroicon-o-tag')
+                        ->color('info')
+                        ->form([
+                            Select::make('type')
+                                ->label(__('Model Type'))
+                                ->options([
+                                    'scan' => __('Scan'),
+                                    'drawing' => __('Drawing'),
+                                    'scan_drawing' => __('Scan + Drawing'),
+                                ])
+                                ->required(),
+                        ])
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records, array $data): void {
+                            foreach ($records as $record) {
+                                $record->update([
+                                    'type' => $data['type'],
+                                ]);
+                            }
+                        })
+                        ->deselectRecordsAfterCompletion(),
+
+                    BulkAction::make('bulkAssignEmployee')
+                        ->label(__('Assign Employee'))
+                        ->icon('heroicon-o-user-group')
+                        ->color('success')
+                        ->form([
+                            Select::make('employee_id')
+                                ->label(__('Employee'))
+                                ->options(function () {
+                                    $options = \App\Models\Employee::pluck('name', 'id')->toArray();
+                                    return ['admin' => __('Admin / Self')] + $options;
+                                })
+                                ->required(),
+                        ])
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records, array $data): void {
+                            $employeeId = $data['employee_id'] === 'admin' ? null : $data['employee_id'];
+                            foreach ($records as $record) {
+                                $record->update([
+                                    'employee_id' => $employeeId,
+                                ]);
+                            }
+                        })
+                        ->deselectRecordsAfterCompletion(),
                 ]),
             ]);
     }

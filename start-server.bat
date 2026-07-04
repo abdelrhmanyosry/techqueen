@@ -1,4 +1,5 @@
 @echo off
+set PATH=D:\laragon\bin\php\php-8.5.8-nts;D:\laragon\bin\composer;%PATH%
 title TechQueen Local Server
 echo ===================================================
 echo   Starting TechQueen Local Server...

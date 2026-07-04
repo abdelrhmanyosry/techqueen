@@ -34,10 +34,46 @@ class DeliveryAndWorkloadReminderWidget extends Widget
             ->with('client')
             ->get();
 
+        // 4. Success rate calculations (Current Month)
+        $currentMonth = now()->month;
+        $currentYear = now()->year;
+        
+        $successModelsCount = ClientModel::query()
+            ->whereIn('status', ['finished_paid', 'completed', 'finished_unpaid'])
+            ->where(fn ($q) => 
+                $q->whereMonth('completed_at', $currentMonth)->whereYear('completed_at', $currentYear)
+                  ->orWhere(fn ($sq) => 
+                      $sq->whereNull('completed_at')
+                         ->whereMonth('delivery_date', $currentMonth)
+                         ->whereYear('delivery_date', $currentYear)
+                  )
+            )
+            ->count();
+            
+        $elapsedDays = now()->day;
+        $successRatePerDay = $elapsedDays > 0 ? ($successModelsCount / $elapsedDays) : 0;
+
+        $totalModelsCount = ClientModel::query()
+            ->where(fn ($q) => 
+                $q->whereMonth('completed_at', $currentMonth)->whereYear('completed_at', $currentYear)
+                  ->orWhere(fn ($sq) => 
+                      $sq->whereMonth('delivery_date', $currentMonth)
+                         ->whereYear('delivery_date', $currentYear)
+                  )
+            )
+            ->count();
+
+        $completionRate = $totalModelsCount > 0 ? ($successModelsCount / $totalModelsCount) * 100 : 0;
+
         return [
             'deliveries' => $deliveries,
             'employees' => $employees,
             'adminModels' => $adminModels,
+            'successModelsCount' => $successModelsCount,
+            'successRatePerDay' => $successRatePerDay,
+            'totalModelsCount' => $totalModelsCount,
+            'completionRate' => $completionRate,
+            'elapsedDays' => $elapsedDays,
         ];
     }
 }

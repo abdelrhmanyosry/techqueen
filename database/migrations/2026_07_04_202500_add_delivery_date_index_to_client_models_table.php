@@ -10,25 +10,19 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::create('clients', function (Blueprint $table) {
-        $table->id();
-
-        $table->string('name');
-        $table->string('field')->nullable();
-        $table->string('phone')->nullable();
-
-        $table->text('notes')->nullable();
-
-        $table->timestamps();
-    });
-}
+    {
+        Schema::table('client_models', function (Blueprint $table) {
+            $table->index('delivery_date');
+        });
+    }
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('clients');
+        Schema::table('client_models', function (Blueprint $table) {
+            $table->dropIndex(['delivery_date']);
+        });
     }
 };

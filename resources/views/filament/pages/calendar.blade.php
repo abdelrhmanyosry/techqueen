@@ -1,12 +1,12 @@
 <x-filament-panels::page>
     @php
         $statusLabels = [
-            'in_progress' => 'In Progress',
-            'canceled' => 'Canceled',
-            'on_hold' => 'On Hold',
-            'finished_unpaid' => 'Finished but Unpaid',
-            'paid_unfinished' => 'Paid but Not Finished',
-            'finished_paid' => 'Finished and Paid',
+            'in_progress' => __('In Progress'),
+            'canceled' => __('Canceled'),
+            'on_hold' => __('On Hold'),
+            'finished_unpaid' => __('Finished but Unpaid'),
+            'paid_unfinished' => __('Paid but Not Finished'),
+            'finished_paid' => __('Finished and Paid'),
         ];
 
         $statusClasses = [
@@ -90,7 +90,7 @@
                         wire:click="previousMonth"
                         class="shadow-sm"
                     >
-                        Previous
+                        {{ __('Previous') }}
                     </x-filament::button>
 
                     <x-filament::button 
@@ -99,7 +99,7 @@
                         wire:click="goToToday"
                         class="shadow-sm"
                     >
-                        Today
+                        {{ __('Today') }}
                     </x-filament::button>
 
                     <x-filament::button 
@@ -110,7 +110,7 @@
                         wire:click="nextMonth"
                         class="shadow-sm"
                     >
-                        Next
+                        {{ __('Next') }}
                     </x-filament::button>
                 </div>
             </div>
@@ -119,13 +119,13 @@
             <div class="p-6">
                 <!-- Days of Week Header -->
                 <div class="calendar-grid-header text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                    <div>Sun</div>
-                    <div>Mon</div>
-                    <div>Tue</div>
-                    <div>Wed</div>
-                    <div>Thu</div>
-                    <div>Fri</div>
-                    <div>Sat</div>
+                    <div>{{ __('Sun') }}</div>
+                    <div>{{ __('Mon') }}</div>
+                    <div>{{ __('Tue') }}</div>
+                    <div>{{ __('Wed') }}</div>
+                    <div>{{ __('Thu') }}</div>
+                    <div>{{ __('Fri') }}</div>
+                    <div>{{ __('Sat') }}</div>
                 </div>
 
                 <!-- Grid Calendar Cells -->
@@ -183,10 +183,10 @@
     <div class="p-5 border-b border-gray-200 dark:border-gray-800 bg-gray-50/70 dark:bg-gray-950/40">
         <div class="flex items-center justify-between gap-4">
             <h3 class="text-base font-bold text-gray-900 dark:text-white tracking-tight">
-                Schedules on Date
+                {{ __('Schedules on Date') }}
             </h3>
             <span class="text-xs font-semibold text-gray-600 dark:text-gray-300 px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200/50 dark:border-gray-700/50 whitespace-nowrap">
-                {{ \Illuminate\Support\Carbon::parse($this->selectedDate)->format('d M Y') }}
+                {{ \Illuminate\Support\Carbon::parse($this->selectedDate)->translatedFormat('d M Y') }}
             </span>
         </div>
     </div>
@@ -198,10 +198,10 @@
                     <x-heroicon-o-check-circle class="w-7 h-7" style="width: 28px; height: 28px;" />
                 </div>
                 <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-1">
-                    No Deliveries Scheduled
+                    {{ __('No Deliveries Scheduled') }}
                 </h4>
                 <p class="text-xs text-gray-500 dark:text-gray-400 max-w-[220px] leading-relaxed">
-                    There are no client model pieces due for delivery on this day.
+                    {{ __('There are no client model pieces due for delivery on this day.') }}
                 </p>
             </div>
         @else
@@ -216,7 +216,7 @@
                                 </a>
                                 @if ($delivery->client)
                                     <p class="text-xs text-gray-500 dark:text-gray-400">
-                                        Client: 
+                                        {{ __('Client:') }} 
                                         <a href="{{ route('filament.admin.resources.clients.view', ['record' => $delivery->client_id]) }}" class="font-medium text-gray-700 dark:text-gray-300 hover:underline transition">
                                             {{ $delivery->client->name }}
                                         </a>
@@ -249,7 +249,7 @@
                             <div 
                                 x-show="open"
                                 x-transition
-                                class="absolute left-0 mt-1 z-50 w-48 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-lg py-1.5 text-xs"
+                                class="absolute start-0 mt-1 z-50 w-48 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-lg py-1.5 text-xs"
                                 style="display: none;"
                             >
                                 @foreach ($statusLabels as $statusKey => $statusVal)
@@ -257,7 +257,7 @@
                                         type="button"
                                         wire:click="updateDeliveryStatus({{ $delivery->id }}, '{{ $statusKey }}')"
                                         @click="open = false"
-                                        class="flex items-center gap-2 w-full text-left px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition text-gray-700 dark:text-gray-300 font-semibold"
+                                        class="flex items-center gap-2 w-full text-start px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition text-gray-700 dark:text-gray-300 font-semibold"
                                     >
                                         @php
                                             $dotColor = match ($statusKey) {
@@ -285,28 +285,28 @@
                         @endphp
                         <div class="pt-3 border-t border-gray-100 dark:border-gray-800/60 grid grid-cols-3 gap-2 text-xs">
                             <div>
-                                <span class="block text-[10px] uppercase tracking-wider font-semibold text-gray-400 dark:text-gray-500 mb-0.5">Price</span>
+                                <span class="block text-[10px] uppercase tracking-wider font-semibold text-gray-400 dark:text-gray-500 mb-0.5">{{ __('Price') }}</span>
                                 <span class="font-bold text-gray-900 dark:text-white whitespace-nowrap">
-                                    {{ $hidePrices ? '***' : number_format($delivery->price, 0) . ' EGP' }}
+                                    {{ $hidePrices ? '***' : number_format($delivery->price, 0) . ' ' . __('EGP') }}
                                 </span>
                             </div>
                             <div class="text-center">
-                                <span class="block text-[10px] uppercase tracking-wider font-semibold text-gray-400 dark:text-gray-500 mb-0.5">Deposit</span>
+                                <span class="block text-[10px] uppercase tracking-wider font-semibold text-gray-400 dark:text-gray-500 mb-0.5">{{ __('Deposit') }}</span>
                                 <span class="font-semibold text-sky-600 dark:text-sky-400 whitespace-nowrap">
-                                    {{ $hidePrices ? '***' : number_format($delivery->deposit, 0) . ' EGP' }}
+                                    {{ $hidePrices ? '***' : number_format($delivery->deposit, 0) . ' ' . __('EGP') }}
                                 </span>
                             </div>
                             <div class="text-right">
                                 @php
                                     $remaining = $delivery->price - $delivery->deposit;
                                  @endphp
-                                <span class="block text-[10px] uppercase tracking-wider font-semibold text-gray-400 dark:text-gray-500 mb-0.5">Balance</span>
+                                <span class="block text-[10px] uppercase tracking-wider font-semibold text-gray-400 dark:text-gray-500 mb-0.5">{{ __('Balance') }}</span>
                                 <span @class([
                                     'font-bold whitespace-nowrap',
                                     'text-amber-600 dark:text-amber-400' => $remaining > 0 && !$hidePrices,
                                     'text-emerald-600 dark:text-emerald-400' => ($remaining <= 0 || $hidePrices),
                                 ])>
-                                    {{ $hidePrices ? '***' : number_format($remaining, 0) . ' EGP' }}
+                                    {{ $hidePrices ? '***' : number_format($remaining, 0) . ' ' . __('EGP') }}
                                 </span>
                             </div>
                         </div>

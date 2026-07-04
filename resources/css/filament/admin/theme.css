@@ -2,3 +2,76 @@
 
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
+@source '../../../../vendor/bezhansalleh/filament-language-switch/**/*';
+
+body.table-fullscreen-active {
+    overflow: hidden !important;
+}
+
+body.table-fullscreen-active .fi-sidebar,
+body.table-fullscreen-active .fi-topbar,
+body.table-fullscreen-active .fi-header {
+    display: none !important;
+}
+
+body.table-fullscreen-active .fi-main {
+    margin-inline-start: 0 !important;
+    padding: 0 !important;
+}
+
+body.table-fullscreen-active .fi-main-ctn {
+    max-width: none !important;
+    width: 100vw !important;
+    min-height: 100vh !important;
+    padding: 0 !important;
+}
+
+body.table-fullscreen-active .fi-page-ctn,
+body.table-fullscreen-active .fi-page {
+    max-width: none !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+body.table-fullscreen-active .fi-ta {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 99999 !important;
+    margin: 1.5rem !important;
+    height: calc(100vh - 3rem) !important;
+    width: calc(100vw - 3rem) !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+    border-radius: 0.75rem !important;
+    border: 1px solid rgb(228, 228, 231) !important;
+    padding: 2rem !important;
+    background-color: rgb(255, 255, 255) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+    animation: table-modal-zoom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+body.table-fullscreen-active .fi-ta-ctn {
+    flex-grow: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+}
+
+.dark body.table-fullscreen-active .fi-ta {
+    border-color: rgb(39, 39, 42) !important;
+    background-color: rgb(9, 9, 11) !important;
+}
+
+@keyframes table-modal-zoom {
+    0% {
+        opacity: 0;
+        transform: scale(0.92) translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}

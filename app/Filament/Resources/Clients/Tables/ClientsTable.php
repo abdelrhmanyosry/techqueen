@@ -9,6 +9,8 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Actions\BulkAction;
+use Filament\Forms\Components\TextInput;
 
 class ClientsTable
 {
@@ -17,10 +19,16 @@ class ClientsTable
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label(__('Name'))
+                    ->wrap()
                     ->searchable(),
                 TextColumn::make('field')
+                    ->label(__('Field'))
+                    ->wrap()
                     ->searchable(),
                 TextColumn::make('phone')
+                    ->label(__('Phone'))
+                    ->wrap()
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->date()
@@ -36,7 +44,7 @@ class ClientsTable
             ])
             ->recordActions([
                 Action::make('whatsapp')
-                    ->label('WhatsApp')
+                    ->label(__('WhatsApp'))
                     ->icon('heroicon-o-chat-bubble-left-right')
                     ->color('success')
                     ->url(function ($record) {
@@ -53,8 +61,33 @@ class ClientsTable
                 EditAction::make(),
             ])
             ->toolbarActions([
+                \Filament\Actions\Action::make('fullscreen')
+                    ->label(__('Full Screen'))
+                    ->icon('heroicon-m-arrows-pointing-out')
+                    ->color('gray')
+                    ->extraAttributes([
+                        'x-on:click.prevent.stop' => "document.body.classList.toggle('table-fullscreen-active')",
+                    ]),
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    
+                    BulkAction::make('bulkUpdateField')
+                        ->label(__('Update Field'))
+                        ->icon('heroicon-o-briefcase')
+                        ->color('info')
+                        ->form([
+                            TextInput::make('field')
+                                ->label(__('Field'))
+                                ->required(),
+                        ])
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records, array $data): void {
+                            foreach ($records as $record) {
+                                $record->update([
+                                    'field' => $data['field'],
+                                ]);
+                            }
+                        })
+                        ->deselectRecordsAfterCompletion(),
                 ]),
             ]);
     }

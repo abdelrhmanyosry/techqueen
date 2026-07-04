@@ -45,25 +45,26 @@ class ModelsRelationManager extends RelationManager
             ->recordTitleAttribute('piece_name')
             ->columns([
                 TextColumn::make('piece_name')
-                    ->label('Model Piece')
+                    ->label(__('Model Piece'))
                     ->searchable(),
                 TextColumn::make('client.name')
-                    ->label('Client')
+                    ->label(__('Client'))
                     ->searchable(),
                   ViewColumn::make('status')
-                    ->label('Status')
+                    ->label(__('Status'))
                     ->view('filament.tables.columns.status-dropdown')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('price')
+                    ->label(__('Price'))
                     ->state(fn ($record) => session('hide_prices', false) ? '***' : $record->price)
-                    ->formatStateUsing(fn ($state) => $state === '***' ? '***' : number_format((float)$state, 0) . ' EGP'),
+                    ->formatStateUsing(fn ($state) => $state === '***' ? '***' : number_format((float)$state, 0) . ' ' . __('EGP')),
                 TextColumn::make('commission')
-                    ->label('Commission')
+                    ->label(__('Commission'))
                     ->state(fn ($record) => session('hide_prices', false) ? '***' : ($record->price * ($this->getOwnerRecord()->commission_rate ?? 50)) / 100)
-                    ->formatStateUsing(fn ($state) => $state === '***' ? '***' : number_format((float)$state, 0) . ' EGP'),
+                    ->formatStateUsing(fn ($state) => $state === '***' ? '***' : number_format((float)$state, 0) . ' ' . __('EGP')),
                 TextColumn::make('commission_status')
-                    ->label('Payout Status')
+                    ->label(__('Payout Status'))
                     ->badge()
                     ->state(fn ($record) => in_array($record->status, ['finished_paid', 'completed']) ? 'earned' : 'pending')
                     ->color(fn (string $state): string => match ($state) {
@@ -71,9 +72,13 @@ class ModelsRelationManager extends RelationManager
                         'pending' => 'warning',
                         default => 'gray',
                     })
-                    ->formatStateUsing(fn ($state) => ucfirst($state)),
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        'earned' => __('Earned'),
+                        'pending' => __('Pending'),
+                        default => $state,
+                    }),
                 \Filament\Tables\Columns\ToggleColumn::make('employee_paid')
-                    ->label('Paid to Employee')
+                    ->label(__('Paid to Employee'))
                     ->disabled(fn ($record) => !in_array($record->status, ['finished_paid', 'completed']))
                     ->afterStateUpdated(function ($livewire) {
                         $livewire->dispatch('refreshMonthlyEarnings');
@@ -87,14 +92,14 @@ class ModelsRelationManager extends RelationManager
             ])
             ->recordActions([
                 \Filament\Actions\Action::make('reassign')
-                    ->label('Assign to another')
+                    ->label(__('Assign to another'))
                     ->icon('heroicon-m-arrow-path')
                     ->color('warning')
                     ->form([
                         \Filament\Forms\Components\Select::make('employee_id')
-                            ->label('Employee')
+                            ->label(__('Employee'))
                             ->options(fn () => \App\Models\Employee::pluck('name', 'id')->toArray())
-                            ->placeholder('Admin / Self (Unassigned)')
+                            ->placeholder(__('Admin / Self (Unassigned)'))
                             ->native(false),
                     ])
                     ->action(function ($record, array $data, $livewire) {

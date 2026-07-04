@@ -12,9 +12,15 @@ class Calendar extends Page
 
     protected string $view = 'filament.pages.calendar';
 
-    protected static ?string $navigationLabel = 'Calendar';
+    public static function getNavigationLabel(): string
+    {
+        return __('Calendar');
+    }
 
-    protected static ?string $title = 'Delivery Calendar';
+    public function getTitle(): string|\Illuminate\Contracts\Support\Htmlable
+    {
+        return __('Delivery Calendar');
+    }
 
     public int $month;
     public int $year;
@@ -113,7 +119,7 @@ class Calendar extends Page
 
     public function getMonthNameProperty(): string
     {
-        return Carbon::create($this->year, $this->month, 1)->format('F Y');
+        return Carbon::create($this->year, $this->month, 1)->translatedFormat('F Y');
     }
 
     public function updateDeliveryStatus(int $id, string $status)
@@ -122,8 +128,8 @@ class Calendar extends Page
         $model->update(['status' => $status]);
 
         \Filament\Notifications\Notification::make()
-            ->title('Status Updated')
-            ->body("Model '{$model->piece_name}' status has been updated successfully.")
+            ->title(__('Status Updated'))
+            ->body(__('Model :name status has been updated successfully.', ['name' => $model->piece_name]))
             ->success()
             ->send();
     }

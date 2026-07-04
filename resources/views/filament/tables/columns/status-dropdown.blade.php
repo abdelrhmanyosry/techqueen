@@ -3,12 +3,12 @@
     $record = $getRecord();
 
     $statusLabels = [
-        'in_progress' => 'In Progress',
-        'canceled' => 'Canceled',
-        'on_hold' => 'On Hold',
-        'finished_unpaid' => 'Finished but Unpaid',
-        'paid_unfinished' => 'Paid but Not Finished',
-        'finished_paid' => 'Finished and Paid',
+        'in_progress' => __('In Progress'),
+        'canceled' => __('Canceled'),
+        'on_hold' => __('On Hold'),
+        'finished_unpaid' => __('Finished but Unpaid'),
+        'paid_unfinished' => __('Paid but Not Finished'),
+        'finished_paid' => __('Finished and Paid'),
     ];
 
     $statusClasses = [
@@ -52,7 +52,7 @@
                 type="button"
                 wire:click="updateStatus({{ $record->id }}, '{{ $statusKey }}')"
                 @click.stop="open = false"
-                class="flex items-center gap-2 w-full text-left px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition text-gray-700 dark:text-gray-300 font-semibold"
+                class="flex items-center gap-2 w-full text-start px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition text-gray-700 dark:text-gray-300 font-semibold"
             >
                 @php
                     $dotColor = match ($statusKey) {

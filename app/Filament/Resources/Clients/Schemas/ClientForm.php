@@ -13,12 +13,15 @@ class ClientForm
         return $schema
             ->components([
                 TextInput::make('name')
+                    ->label(__('Name'))
                     ->required(),
-                TextInput::make('field'),
+                TextInput::make('field')
+                    ->label(__('Field')),
                 TextInput::make('phone')
-                    ->tel()
-                    ->required(),
+                    ->label(__('Phone'))
+                    ->tel(),
                 Textarea::make('notes')
+                    ->label(__('Notes'))
                     ->columnSpanFull(),
             ]);
     }

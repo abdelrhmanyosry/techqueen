@@ -1,10 +1,10 @@
 <x-filament-widgets::widget>
     @php
         $statusLabels = [
-            'in_progress' => 'In Progress',
-            'on_hold' => 'On Hold',
-            'finished_unpaid' => 'Finished but Unpaid',
-            'paid_unfinished' => 'Paid but Not Finished',
+            'in_progress' => __('In Progress'),
+            'on_hold' => __('On Hold'),
+            'finished_unpaid' => __('Finished but Unpaid'),
+            'paid_unfinished' => __('Paid but Not Finished'),
         ];
 
         $statusClasses = [
@@ -14,6 +14,65 @@
             'on_hold' => 'bg-gray-50 text-gray-600 ring-1 ring-inset ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:ring-gray-400/20',
         ];
     @endphp
+
+    <!-- Stats Overview Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        
+        <!-- Card 1: Success Rate Per Day -->
+        <div class="p-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between group">
+            <div class="space-y-1">
+                <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider block">
+                    {{ __('Success Rate Per Day') }}
+                </span>
+                <span class="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight block">
+                    {{ number_format($successRatePerDay, 2) }} <span class="text-xs font-bold text-gray-500 dark:text-gray-400">/ {{ __('day') }}</span>
+                </span>
+                <span class="text-[10px] text-gray-400 dark:text-gray-500 block leading-relaxed">
+                    {{ __('Calculated from :count successful models over :days days this month', ['count' => $successModelsCount, 'days' => $elapsedDays]) }}
+                </span>
+            </div>
+            <div class="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-500/10 text-amber-500 group-hover:scale-110 transition duration-300 ring-8 ring-amber-50/50 dark:ring-amber-500/5">
+                <x-heroicon-o-arrow-trending-up class="w-6 h-6" style="width: 24px; height: 24px;" />
+            </div>
+        </div>
+
+        <!-- Card 2: Successful Models -->
+        <div class="p-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between group">
+            <div class="space-y-1">
+                <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider block">
+                    {{ __('Successful Models') }}
+                </span>
+                <span class="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight block">
+                    {{ $successModelsCount }}
+                </span>
+                <span class="text-[10px] text-gray-400 dark:text-gray-500 block leading-relaxed">
+                    {{ __('Completed and Paid/Unpaid models this month') }}
+                </span>
+            </div>
+            <div class="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 group-hover:scale-110 transition duration-300 ring-8 ring-emerald-50/50 dark:ring-emerald-500/5">
+                <x-heroicon-o-check-badge class="w-6 h-6" style="width: 24px; height: 24px;" />
+            </div>
+        </div>
+
+        <!-- Card 3: Completion Rate -->
+        <div class="p-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between group">
+            <div class="space-y-1">
+                <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider block">
+                    {{ __('Completion Rate') }}
+                </span>
+                <span class="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight block">
+                    {{ number_format($completionRate, 1) }}%
+                </span>
+                <span class="text-[10px] text-gray-400 dark:text-gray-500 block leading-relaxed">
+                    {{ __(':success of :total total models this month', ['success' => $successModelsCount, 'total' => $totalModelsCount]) }}
+                </span>
+            </div>
+            <div class="p-3.5 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-500 group-hover:scale-110 transition duration-300 ring-8 ring-blue-50/50 dark:ring-blue-500/5">
+                <x-heroicon-o-chart-pie class="w-6 h-6" style="width: 24px; height: 24px;" />
+            </div>
+        </div>
+
+    </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
@@ -26,8 +85,8 @@
                             <x-heroicon-o-clock class="w-6 h-6" style="width: 24px; height: 24px;" />
                         </span>
                         <div>
-                            <h3 class="text-base font-bold text-gray-900 dark:text-white">Upcoming Deliveries Reminder</h3>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Active models sorted by nearest delivery date</p>
+                            <h3 class="text-base font-bold text-gray-900 dark:text-white">{{ __('Upcoming Deliveries Reminder') }}</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('Active models sorted by nearest delivery date') }}</p>
                         </div>
                     </div>
                     <a 
@@ -35,7 +94,7 @@
                         class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-white bg-primary-600 hover:bg-primary-500 rounded-lg shadow-sm transition duration-200"
                     >
                         <x-heroicon-m-plus class="w-4 h-4" style="width: 16px; height: 16px;" />
-                        <span>Create Model</span>
+                        <span>{{ __('Create Model') }}</span>
                     </a>
                 </div>
 
@@ -54,13 +113,13 @@
                                     </a>
                                 </h4>
                                 <p class="text-[10px] text-gray-500 dark:text-gray-400 truncate mt-0.5">
-                                    Client: 
+                                    {{ __('Client:') }} 
                                     @if ($model->client_id)
                                         <a href="{{ route('filament.admin.resources.clients.view', ['record' => $model->client_id]) }}" class="hover:underline hover:text-primary-600 dark:hover:text-primary-400 transition">
                                             {{ $model->client->name }}
                                         </a>
                                     @else
-                                        Walk-in Client
+                                        {{ __('Walk-in Client') }}
                                     @endif
                                 </p>
                             </div>
@@ -79,20 +138,20 @@
                                     'bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400 border border-blue-100 dark:border-blue-500/20' => !$isOverdue && $diffDays > 2,
                                 ])>
                                     @if ($isOverdue)
-                                        Overdue {{ $diffDays }}d
+                                        {{ __('Overdue :days days', ['days' => $diffDays]) }}
                                     @elseif ($diffDays === 0)
-                                        Today
+                                        {{ __('Today') }}
                                     @elseif ($diffDays === 1)
-                                        Tomorrow
+                                        {{ __('Tomorrow') }}
                                     @else
-                                        In {{ $diffDays }} days
+                                        {{ __('In :days days', ['days' => $diffDays]) }}
                                     @endif
                                 </span>
                             </div>
                         </div>
                     @empty
                         <div class="text-center py-6 text-gray-400 dark:text-gray-500 text-xs">
-                            No active deliveries remaining.
+                            {{ __('No active deliveries remaining.') }}
                         </div>
                     @endforelse
                 </div>
@@ -100,7 +159,7 @@
             
             <div class="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 text-right">
                 <a href="{{ route('filament.admin.resources.models.index') }}" class="text-xs font-bold text-primary-600 dark:text-primary-400 hover:underline">
-                    View all models &rarr;
+                    {{ __('View all models') }} &rarr;
                 </a>
             </div>
         </div>
@@ -113,8 +172,8 @@
                         <x-heroicon-o-user-group class="w-6 h-6" style="width: 24px; height: 24px;" />
                     </span>
                     <div>
-                        <h3 class="text-base font-bold text-gray-900 dark:text-white">Active Employee Workloads</h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Current work assigned to employees & admin</p>
+                        <h3 class="text-base font-bold text-gray-900 dark:text-white">{{ __('Active Employee Workloads') }}</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('Current work assigned to employees & admin') }}</p>
                     </div>
                 </div>
 
@@ -129,7 +188,7 @@
                                 <h4 class="text-xs font-bold text-gray-900 dark:text-white flex items-center justify-between">
                                     <span>{{ $employee->name }}</span>
                                     <span class="text-[10px] font-normal text-gray-500 dark:text-gray-400">
-                                        {{ $activeModels->count() }} active {{ $activeModels->count() === 1 ? 'job' : 'jobs' }}
+                                        {{ trans_choice('{1} :count active job|[2,*] :count active jobs', $activeModels->count(), ['count' => $activeModels->count()]) }}
                                     </span>
                                 </h4>
                                 
@@ -153,9 +212,9 @@
                     @if ($adminModels->count() > 0)
                         <div class="space-y-2 border-t border-gray-100 dark:border-gray-800/40 pt-3 first:border-t-0 first:pt-0">
                             <h4 class="text-xs font-bold text-amber-600 dark:text-amber-400 flex items-center justify-between">
-                                <span>Admin / Self (Unassigned)</span>
+                                <span>{{ __('Admin / Self (Unassigned)') }}</span>
                                 <span class="text-[10px] font-normal text-gray-500 dark:text-gray-400">
-                                    {{ $adminModels->count() }} active {{ $adminModels->count() === 1 ? 'job' : 'jobs' }}
+                                    {{ trans_choice('{1} :count active job|[2,*] :count active jobs', $adminModels->count(), ['count' => $adminModels->count()]) }}
                                 </span>
                             </h4>
                             
@@ -176,7 +235,7 @@
 
                     @if ($employees->every(fn($e) => $e->models->filter(fn($m) => !in_array($m->status, ['finished_paid', 'completed', 'canceled']))->count() === 0) && $adminModels->count() === 0)
                         <div class="text-center py-6 text-gray-400 dark:text-gray-500 text-xs">
-                            No active workload at the moment.
+                            {{ __('No active workload at the moment.') }}
                         </div>
                     @endif
                 </div>
@@ -184,7 +243,7 @@
             
             <div class="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 text-right">
                 <a href="{{ route('filament.admin.resources.employees.index') }}" class="text-xs font-bold text-primary-600 dark:text-primary-400 hover:underline">
-                    Manage employees &rarr;
+                    {{ __('Manage employees') }} &rarr;
                 </a>
             </div>
         </div>

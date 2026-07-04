@@ -5,6 +5,7 @@ namespace App\Filament\Resources\ClientModels\Pages;
 use App\Filament\Resources\ClientModels\ClientModelResource;
 use App\Models\ClientModel;
 use Filament\Actions\CreateAction;
+use Filament\Actions\Action;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,24 +24,24 @@ class ListClientModels extends ListRecords
     public function getTabs(): array
     {
         return [
-            'all' => Tab::make('All')
+            'all' => Tab::make(__('All'))
                 ->badge(fn () => ClientModel::count()),
-            'in_progress' => Tab::make('In Progress')
+            'in_progress' => Tab::make(__('In Progress'))
                 ->badge(fn () => ClientModel::where('status', 'in_progress')->count())
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'in_progress')),
-            'paid_unfinished' => Tab::make('Paid & Unfinished')
+            'paid_unfinished' => Tab::make(__('Paid & Unfinished'))
                 ->badge(fn () => ClientModel::where('status', 'paid_unfinished')->count())
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'paid_unfinished')),
-            'finished_unpaid' => Tab::make('Finished & Unpaid')
+            'finished_unpaid' => Tab::make(__('Finished & Unpaid'))
                 ->badge(fn () => ClientModel::where('status', 'finished_unpaid')->count())
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'finished_unpaid')),
-            'finished_paid' => Tab::make('Finished & Paid')
+            'finished_paid' => Tab::make(__('Finished & Paid'))
                 ->badge(fn () => ClientModel::whereIn('status', ['finished_paid', 'completed'])->count())
                 ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('status', ['finished_paid', 'completed'])),
-            'on_hold' => Tab::make('On Hold')
+            'on_hold' => Tab::make(__('On Hold'))
                 ->badge(fn () => ClientModel::where('status', 'on_hold')->count())
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'on_hold')),
-            'canceled' => Tab::make('Canceled')
+            'canceled' => Tab::make(__('Canceled'))
                 ->badge(fn () => ClientModel::where('status', 'canceled')->count())
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'canceled')),
         ];

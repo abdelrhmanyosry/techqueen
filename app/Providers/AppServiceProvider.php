@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use BezhanSalleh\LanguageSwitch\LanguageSwitch;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,6 +17,12 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
+            $switch
+                ->locales(['en', 'ar'])
+                ->visible(outsidePanels: true);
+        });
+
         $dbConnection = config('database.default');
 
         if ($dbConnection === 'sqlite') {
@@ -42,3 +49,4 @@ class AppServiceProvider extends ServiceProvider
         }
     }
 }
+

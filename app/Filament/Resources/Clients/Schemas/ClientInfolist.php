@@ -14,23 +14,26 @@ class ClientInfolist
     {
         return $schema
             ->components([
-                Section::make('Client Details')
+                Section::make(__('Client Details'))
                     ->icon('heroicon-o-user')
                     ->components([
                         Grid::make(3)
                             ->components([
                                 TextEntry::make('name')
+                                    ->label(__('Name'))
                                     ->weight(FontWeight::Bold)
                                     ->color('primary')
                                     ->icon('heroicon-m-user')
                                     ->iconColor('primary'),
                                 
                                 TextEntry::make('field')
+                                    ->label(__('Field'))
                                     ->placeholder('-')
                                     ->weight(FontWeight::SemiBold)
                                     ->icon('heroicon-m-briefcase'),
                                 
                                 TextEntry::make('phone')
+                                    ->label(__('Phone'))
                                     ->weight(FontWeight::SemiBold)
                                     ->icon('heroicon-m-phone')
                                     ->iconColor('success')
@@ -38,26 +41,29 @@ class ClientInfolist
                             ]),
                     ]),
 
-                Section::make('Additional Notes')
+                Section::make(__('Additional Notes'))
                     ->icon('heroicon-o-document-text')
                     ->components([
                         TextEntry::make('notes')
-                            ->placeholder('No notes recorded for this client.')
+                            ->label(__('Notes'))
+                            ->placeholder(__('No notes recorded for this client.'))
                             ->columnSpanFull(),
                     ])
                     ->collapsible(),
 
-                Section::make('System Information')
+                Section::make(__('System Information'))
                     ->icon('heroicon-o-cog')
                     ->components([
                         Grid::make(2)
                             ->components([
                                 TextEntry::make('created_at')
+                                    ->label(__('Created At'))
                                     ->date()
                                     ->icon('heroicon-m-calendar')
                                     ->color('gray'),
                                 
                                 TextEntry::make('updated_at')
+                                    ->label(__('Updated At'))
                                     ->date()
                                     ->icon('heroicon-m-arrow-path')
                                     ->color('gray'),

@@ -30,19 +30,24 @@ class MonthlyEarningsWidget extends TableWidget
                 ->columns([]);
         }
 
+        $isSqlite = \DB::connection()->getDriverName() === 'sqlite';
+        $dateExpr = $isSqlite 
+            ? 'strftime("%Y-%m", COALESCE(completed_at, created_at))'
+            : 'DATE_FORMAT(COALESCE(completed_at, created_at), "%Y-%m")';
+
         $subquery = ClientModel::query()
             ->where('employee_id', $this->record->id)
             ->whereIn('status', ['finished_paid', 'completed'])
-            ->selectRaw('
+            ->selectRaw("
                 MIN(id) as id,
-                DATE_FORMAT(COALESCE(completed_at, created_at), "%Y-%m") as month_year, 
+                {$dateExpr} as month_year, 
                 COUNT(*) as jobs_count, 
                 SUM(price) as total_revenue,
                 SUM((price * ?) / 100) as total_commission,
                 SUM(CASE WHEN employee_paid = 1 THEN (price * ?) / 100 ELSE 0 END) as paid_commission,
                 SUM(CASE WHEN employee_paid = 0 THEN (price * ?) / 100 ELSE 0 END) as unpaid_commission
-            ', [$this->record->commission_rate, $this->record->commission_rate, $this->record->commission_rate])
-            ->groupByRaw('DATE_FORMAT(COALESCE(completed_at, created_at), "%Y-%m")');
+            ", [$this->record->commission_rate, $this->record->commission_rate, $this->record->commission_rate])
+            ->groupByRaw($dateExpr);
 
         return $table
             ->query(
@@ -50,37 +55,37 @@ class MonthlyEarningsWidget extends TableWidget
                     ->fromSub($subquery, 'client_models')
             )
             ->defaultSort('month_year', 'desc')
-            ->heading('Monthly Earnings Summary (Completed & Paid Work Only)')
+            ->heading(__('Monthly Earnings Summary (Completed & Paid Work Only)'))
             ->columns([
                 TextColumn::make('month_year')
-                    ->label('Month')
-                    ->formatStateUsing(fn ($state) => Carbon::parse($state . '-01')->format('F Y'))
+                    ->label(__('Month'))
+                    ->formatStateUsing(fn ($state) => Carbon::parse($state . '-01')->translatedFormat('F Y'))
                     ->weight('bold'),
                 TextColumn::make('jobs_count')
-                    ->label('Completed Models')
+                    ->label(__('Completed Models'))
                     ->alignCenter(),
                 TextColumn::make('total_revenue')
-                    ->label('Total Models Value')
+                    ->label(__('Total Models Value'))
                     ->state(fn ($record) => session('hide_prices', false) ? '***' : $record->total_revenue)
-                    ->formatStateUsing(fn ($state) => $state === '***' ? '***' : number_format((float)$state, 0) . ' EGP')
+                    ->formatStateUsing(fn ($state) => $state === '***' ? '***' : number_format((float)$state, 0) . ' ' . __('EGP'))
                     ->alignRight(),
                 TextColumn::make('total_commission')
-                    ->label('Total Earnings')
+                    ->label(__('Total Earnings'))
                     ->state(fn ($record) => session('hide_prices', false) ? '***' : $record->total_commission)
-                    ->formatStateUsing(fn ($state) => $state === '***' ? '***' : number_format((float)$state, 0) . ' EGP')
+                    ->formatStateUsing(fn ($state) => $state === '***' ? '***' : number_format((float)$state, 0) . ' ' . __('EGP'))
                     ->weight('semibold')
                     ->alignRight(),
                 TextColumn::make('paid_commission')
-                    ->label('Paid to Employee')
+                    ->label(__('Paid to Employee'))
                     ->state(fn ($record) => session('hide_prices', false) ? '***' : $record->paid_commission)
-                    ->formatStateUsing(fn ($state) => $state === '***' ? '***' : number_format((float)$state, 0) . ' EGP')
+                    ->formatStateUsing(fn ($state) => $state === '***' ? '***' : number_format((float)$state, 0) . ' ' . __('EGP'))
                     ->color('success')
                     ->weight('bold')
                     ->alignRight(),
                 TextColumn::make('unpaid_commission')
-                    ->label('Owed (Unpaid)')
+                    ->label(__('Owed (Unpaid)'))
                     ->state(fn ($record) => session('hide_prices', false) ? '***' : $record->unpaid_commission)
-                    ->formatStateUsing(fn ($state) => $state === '***' ? '***' : number_format((float)$state, 0) . ' EGP')
+                    ->formatStateUsing(fn ($state) => $state === '***' ? '***' : number_format((float)$state, 0) . ' ' . __('EGP'))
                     ->color(fn ($state) => $state === '***' ? 'gray' : ($state > 0 ? 'danger' : 'gray'))
                     ->weight('bold')
                     ->alignRight(),
@@ -88,19 +93,22 @@ class MonthlyEarningsWidget extends TableWidget
             ->filters([])
             ->actions([
                 \Filament\Actions\Action::make('markPaid')
-                    ->label('Mark Paid')
+                    ->label(__('Mark Paid'))
                     ->button()
                     ->color('success')
                     ->icon('heroicon-o-check')
                     ->requiresConfirmation()
-                    ->modalHeading('Mark Month as Paid')
-                    ->modalDescription('Are you sure you want to mark all completed models in this month as paid to this employee?')
-                    ->action(fn ($record, $livewire) => ClientModel::query()
-                        ->where('employee_id', $this->record->id)
-                        ->whereIn('status', ['finished_paid', 'completed'])
-                        ->whereRaw('DATE_FORMAT(COALESCE(completed_at, created_at), "%Y-%m") = ?', [$record->month_year])
-                        ->update(['employee_paid' => true])
-                    ),
+                    ->modalHeading(__('Mark Month as Paid'))
+                    ->modalDescription(__('Are you sure you want to mark all completed models in this month as paid to this employee?'))
+                    ->action(function ($record, $livewire) use ($dateExpr) {
+                        ClientModel::query()
+                            ->where('employee_id', $this->record->id)
+                            ->whereIn('status', ['finished_paid', 'completed'])
+                            ->whereRaw("{$dateExpr} = ?", [$record->month_year])
+                            ->update(['employee_paid' => true]);
+                            
+                        $livewire->dispatch('refreshMonthlyEarnings');
+                    }),
             ])
             ->bulkActions([]);
     }

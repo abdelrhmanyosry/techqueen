@@ -15,7 +15,7 @@ class EditEmployee extends EditRecord
     {
         return [
             Action::make('whatsappReminder')
-                ->label('WhatsApp Reminder')
+                ->label(__('WhatsApp Reminder'))
                 ->icon('heroicon-o-chat-bubble-left-right')
                 ->color('success')
                 ->url(function ($record) {

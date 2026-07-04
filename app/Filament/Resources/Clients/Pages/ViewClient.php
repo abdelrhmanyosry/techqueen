@@ -15,7 +15,7 @@ class ViewClient extends ViewRecord
     {
         return [
             Action::make('whatsapp')
-                ->label('WhatsApp')
+                ->label(__('WhatsApp'))
                 ->icon('heroicon-o-chat-bubble-left-right')
                 ->color('success')
                 ->url(function ($record) {
