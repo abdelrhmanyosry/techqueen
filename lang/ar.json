@@ -206,5 +206,9 @@
     "Thumbnail Image": "الصورة المصغرة",
     "Scan Files": "ملفات السكان",
     "SolidWorks Files": "ملفات سوليدووركس",
-    "File": "ملف"
+    "File": "ملف",
+    "Model Details": "تفاصيل الموديل",
+    "No scan files uploaded.": "لم يتم رفع ملفات سكان.",
+    "No SolidWorks files uploaded.": "لم يتم رفع ملفات سوليدووركس.",
+    "Download": "تحميل"
 }
