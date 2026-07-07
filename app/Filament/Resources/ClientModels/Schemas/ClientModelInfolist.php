@@ -216,10 +216,12 @@ class ClientModelInfolist
                                 Section::make(__('Scan Files'))
                                     ->icon('heroicon-o-document-magnifying-glass')
                                     ->components([
-                                        TextEntry::make('scan_files')
+                                        TextEntry::make('scan_files_list')
                                             ->label(__('Scan Files'))
+                                            ->state(fn ($record) => $record)
                                             ->html()
-                                            ->formatStateUsing(function ($state, $record) {
+                                            ->formatStateUsing(function ($state) {
+                                                $record = $state;
                                                 if (empty($record->scan_files) || !is_array($record->scan_files)) {
                                                     return '<div class="text-gray-500 dark:text-gray-400 text-sm py-4 text-center border border-dashed border-gray-200 dark:border-gray-800 rounded-lg">' . __('No scan files uploaded.') . '</div>';
                                                 }
@@ -255,10 +257,12 @@ class ClientModelInfolist
                                 Section::make(__('SolidWorks Files'))
                                     ->icon('heroicon-o-document-duplicate')
                                     ->components([
-                                        TextEntry::make('solidworks_files')
+                                        TextEntry::make('solidworks_files_list')
                                             ->label(__('SolidWorks Files'))
+                                            ->state(fn ($record) => $record)
                                             ->html()
-                                            ->formatStateUsing(function ($state, $record) {
+                                            ->formatStateUsing(function ($state) {
+                                                $record = $state;
                                                 if (empty($record->solidworks_files) || !is_array($record->solidworks_files)) {
                                                     return '<div class="text-gray-500 dark:text-gray-400 text-sm py-4 text-center border border-dashed border-gray-200 dark:border-gray-800 rounded-lg">' . __('No SolidWorks files uploaded.') . '</div>';
                                                 }
