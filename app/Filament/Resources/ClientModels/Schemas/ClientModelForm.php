@@ -95,6 +95,10 @@ class ClientModelForm
                     ->multiple()
                     ->image()
                     ->directory('model-images')
+                    ->getUploadedFileNameForStorageUsing(
+                        fn (\Livewire\Features\SupportFileUploads\TemporaryUploadedFile $file): string => 
+                            date('Y-m-d') . '-' . $file->getClientOriginalName()
+                    )
                     ->reorderable()
                     ->live()
                     ->columnSpanFull(),
@@ -122,6 +126,10 @@ class ClientModelForm
                     ->disk('public')
                     ->multiple()
                     ->directory('scan-files')
+                    ->getUploadedFileNameForStorageUsing(
+                        fn (\Livewire\Features\SupportFileUploads\TemporaryUploadedFile $file): string => 
+                            date('Y-m-d') . '-' . $file->getClientOriginalName()
+                    )
                     ->openable()
                     ->downloadable()
                     ->columnSpanFull(),
@@ -130,6 +138,10 @@ class ClientModelForm
                     ->disk('public')
                     ->multiple()
                     ->directory('solidworks-files')
+                    ->getUploadedFileNameForStorageUsing(
+                        fn (\Livewire\Features\SupportFileUploads\TemporaryUploadedFile $file): string => 
+                            date('Y-m-d') . '-' . $file->getClientOriginalName()
+                    )
                     ->openable()
                     ->downloadable()
                     ->columnSpanFull(),
