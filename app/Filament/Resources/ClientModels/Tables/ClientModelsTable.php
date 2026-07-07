@@ -9,7 +9,6 @@ use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\ViewColumn;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Table;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Actions\BulkAction;
@@ -21,14 +20,6 @@ class ClientModelsTable
     {
         return $table
             ->columns([
-                ImageColumn::make('thumbnail')
-                    ->label(__('Image'))
-                    ->disk('public')
-                    ->state(fn ($record) => $record->thumbnail ?? (!empty($record->images) && is_array($record->images) ? $record->images[0] : null))
-                    ->square()
-                    ->size(40)
-                    ->url(fn ($record) => ($path = $record->thumbnail ?? (!empty($record->images) && is_array($record->images) ? $record->images[0] : null)) ? asset('storage/' . $path) : null)
-                    ->openUrlInNewTab(),
                  TextColumn::make('client.name')
                     ->label(__('Client'))
                     ->wrap()
@@ -43,6 +34,18 @@ class ClientModelsTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('piece_name')
                     ->label(__('Piece name'))
+                    ->html()
+                    ->formatStateUsing(function ($state, $record) {
+                        $thumbnail = $record->thumbnail ?? (!empty($record->images) && is_array($record->images) ? $record->images[0] : null);
+                        
+                        $imageHtml = '';
+                        if ($thumbnail) {
+                            $imageUrl = asset('storage/' . $thumbnail);
+                            $imageHtml = '<a href="' . $imageUrl . '" target="_blank" class="inline-block no-print me-2 shrink-0 align-middle" onclick="event.stopPropagation();"><img src="' . $imageUrl . '" class="w-8 h-8 rounded object-cover border border-gray-200 dark:border-gray-800 shadow-sm hover:border-[#ffb900] transition" style="width: 32px; height: 32px; min-width: 32px;" /></a>';
+                        }
+                        
+                        return '<div class="flex items-center gap-2">' . $imageHtml . '<span>' . e($state) . '</span></div>';
+                    })
                     ->wrap()
                     ->searchable(),
                 TextColumn::make('type')
