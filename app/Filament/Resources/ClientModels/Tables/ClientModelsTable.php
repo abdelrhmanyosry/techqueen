@@ -66,10 +66,12 @@ class ClientModelsTable
                     })
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('scan_files')
+                TextColumn::make('scan_files_list')
                     ->label(__('Scan Files'))
+                    ->state(fn ($record) => $record)
                     ->html()
-                    ->formatStateUsing(function ($state, $record) {
+                    ->formatStateUsing(function ($state) {
+                        $record = $state;
                         if (empty($record->scan_files) || !is_array($record->scan_files)) {
                             return '<span class="text-gray-400 dark:text-gray-600 text-xs">-</span>';
                         }
@@ -87,11 +89,13 @@ class ClientModelsTable
                         
                         return $html;
                     })
-                    ->toggleable(isToggledHiddenByDefault: false),
-                TextColumn::make('solidworks_files')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('solidworks_files_list')
                     ->label(__('SolidWorks Files'))
+                    ->state(fn ($record) => $record)
                     ->html()
-                    ->formatStateUsing(function ($state, $record) {
+                    ->formatStateUsing(function ($state) {
+                        $record = $state;
                         if (empty($record->solidworks_files) || !is_array($record->solidworks_files)) {
                             return '<span class="text-gray-400 dark:text-gray-600 text-xs">-</span>';
                         }
@@ -109,7 +113,7 @@ class ClientModelsTable
                         
                         return $html;
                     })
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('receiving_date')
                     ->label(__('Receiving date'))
                     ->date()
