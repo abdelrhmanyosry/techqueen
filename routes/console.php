@@ -9,4 +9,5 @@ Artisan::command('inspire', function () {
 
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command('db:backup-to-remote')->everyMinute();
+Schedule::command('db:backup-to-remote')->everyTenMinutes();
+

@@ -24,6 +24,11 @@ class EditClient extends EditRecord
                         return null;
                     }
                     $phone = preg_replace('/[^0-9]/', '', $record->phone);
+                    if (str_starts_with($phone, '00')) {
+                        $phone = substr($phone, 2);
+                    } elseif (str_starts_with($phone, '0')) {
+                        $phone = '20' . substr($phone, 1);
+                    }
                     $message = "Hi {$record->name},\n\nThis is TechQueen Workshop.";
                     return "https://wa.me/{$phone}?text=" . rawurlencode($message);
                 })

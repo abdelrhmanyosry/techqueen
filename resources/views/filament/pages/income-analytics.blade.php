@@ -30,27 +30,6 @@
 
     <!-- Custom CSS Styles -->
     <style>
-        .analytics-grid {
-            display: grid;
-            grid-template-columns: repeat(1, minmax(0, 1fr));
-            gap: 1.5rem;
-        }
-        @media (min-width: 768px) {
-            .stats-row {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-        }
-        @media (min-width: 1280px) {
-            .stats-row {
-                grid-template-columns: repeat(4, minmax(0, 1fr));
-            }
-            .charts-row {
-                grid-template-columns: 2fr 1fr;
-            }
-            .tables-row {
-                grid-template-columns: 1fr 2fr;
-            }
-        }
 
         /* Printing styling overrides */
         @media print {
@@ -146,7 +125,7 @@
                     <h1 class="text-2xl font-bold text-black">{{ __('TechQueen Business Performance Report') }}</h1>
                     <p class="text-sm text-gray-600">{{ __('Generated on:') }} {{ now()->format('Y-m-d') }}</p>
                 </div>
-                <div class="text-right">
+                <div class="text-end">
                     <h2 class="text-lg font-bold text-gray-800">{{ $this->months[$this->month] }} {{ $this->year }}</h2>
                     <p class="text-xs text-gray-600">{{ __('Total Models Created:') }} {{ $this->stats['total_jobs'] }}</p>
                 </div>
@@ -253,37 +232,37 @@
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs border-collapse">
+                    <table class="w-full text-start text-xs border-collapse">
                         <thead>
                             <tr class="border-b border-gray-100 dark:border-gray-800 pb-2 text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">
-                                <th class="pb-2">{{ __('Model Piece') }}</th>
-                                <th class="pb-2">{{ __('Client') }}</th>
+                                <th class="pb-2 text-start">{{ __('Model Piece') }}</th>
+                                <th class="pb-2 text-start">{{ __('Client') }}</th>
                                 <th class="pb-2 text-center">{{ __('Dates') }}</th>
-                                <th class="pb-2 text-right">{{ __('Price') }}</th>
-                                <th class="pb-2 text-right">{{ __('Deposit') }}</th>
-                                <th class="pb-2 text-right">{{ __('Balance') }}</th>
+                                <th class="pb-2 text-end">{{ __('Price') }}</th>
+                                <th class="pb-2 text-end">{{ __('Deposit') }}</th>
+                                <th class="pb-2 text-end">{{ __('Balance') }}</th>
                                 <th class="pb-2 text-center">{{ __('Status') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-800/40 text-gray-700 dark:text-gray-300">
                             @forelse ($this->monthlyModels as $model)
                                 <tr>
-                                    <td class="py-3 font-semibold text-gray-900 dark:text-white">
+                                    <td class="py-3 text-start font-semibold text-gray-900 dark:text-white">
                                         {{ $model->piece_name }}
                                         <span class="block text-[9px] font-normal text-gray-500 dark:text-gray-400">ID: #{{ $model->id }}</span>
                                     </td>
-                                    <td class="py-3">{{ $model->client?->name ?? __('Walk-in Client') }}</td>
+                                    <td class="py-3 text-start">{{ $model->client?->name ?? __('Walk-in Client') }}</td>
                                     <td class="py-3 text-center">
                                         <span class="block text-[10px]">{{ __('Rec:') }} {{ $model->receiving_date }}</span>
                                         <span class="block text-[10px] font-bold text-gray-500 dark:text-gray-400">{{ __('Del:') }} {{ $model->delivery_date }}</span>
                                     </td>
-                                    <td class="py-3 text-right font-semibold">
+                                    <td class="py-3 text-end font-semibold">
                                         {{ $hidePrices ? '***' : number_format($model->price, 0) . ' ' . __('EGP') }}
                                     </td>
-                                    <td class="py-3 text-right text-gray-500 dark:text-gray-400">
+                                    <td class="py-3 text-end text-gray-500 dark:text-gray-400">
                                         {{ $hidePrices ? '***' : number_format($model->deposit, 0) . ' ' . __('EGP') }}
                                     </td>
-                                    <td class="py-3 text-right font-bold {{ $model->price - $model->deposit > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400' }}">
+                                    <td class="py-3 text-end font-bold {{ $model->price - $model->deposit > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400' }}">
                                         {{ $hidePrices ? '***' : number_format(max(0, $model->price - $model->deposit), 0) . ' ' . __('EGP') }}
                                     </td>
                                     <td class="py-3 text-center">
@@ -312,23 +291,23 @@
                 </div>
 
                 <div class="overflow-x-auto flex-1">
-                    <table class="w-full text-left text-xs border-collapse">
+                    <table class="w-full text-start text-xs border-collapse">
                         <thead>
                             <tr class="border-b border-gray-100 dark:border-gray-800/80 pb-2 text-gray-500 dark:text-gray-400 uppercase tracking-wider font-semibold">
-                                <th class="pb-2">{{ __('Client') }}</th>
+                                <th class="pb-2 text-start">{{ __('Client') }}</th>
                                 <th class="pb-2 text-center">{{ __('Jobs') }}</th>
-                                <th class="pb-2 text-right">{{ __('Revenue') }}</th>
+                                <th class="pb-2 text-end">{{ __('Revenue') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-800/40 text-gray-700 dark:text-gray-300">
                             @forelse ($this->topClients as $client)
                                 <tr>
-                                    <td class="py-2.5 font-bold">
+                                    <td class="py-2.5 text-start font-bold">
                                         {{ $client['name'] }}
                                         <span class="block text-[10px] font-normal text-gray-500 dark:text-gray-400">{{ $client['field'] }}</span>
                                     </td>
                                     <td class="py-2.5 text-center font-semibold">{{ $client['jobs_count'] }}</td>
-                                    <td class="py-2.5 text-right font-extrabold text-emerald-600 dark:text-emerald-400">
+                                    <td class="py-2.5 text-end font-extrabold text-emerald-600 dark:text-emerald-400">
                                         {{ $hidePrices ? '***' : number_format($client['revenue'], 0) . ' ' . __('EGP') }}
                                     </td>
                                 </tr>

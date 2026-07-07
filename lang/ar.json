@@ -199,5 +199,6 @@
     "Sync data from remote database": "مزامنة البيانات من السحابة",
     "Are you sure you want to download remote data? This will overwrite your local changes.": "هل أنت متأكد من رغبتك في تنزيل البيانات من السحابة؟ هذا الإجراء سيقوم بالكتابة فوق البيانات المحلية الحالية.",
     "Data synced successfully!": "تمت المزامنة وتنزيل البيانات بنجاح!",
-    "Database sync failed!": "فشلت مزامنة البيانات!"
+    "Database sync failed!": "فشلت مزامنة البيانات!",
+    "Yes, sync data": "نعم، مزامنة البيانات"
 }
