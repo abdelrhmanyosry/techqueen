@@ -27,8 +27,12 @@ class ClientModelsTable
                     ->state(fn ($record) => $record->thumbnail ?? (!empty($record->images) && is_array($record->images) ? $record->images[0] : null))
                     ->square()
                     ->size(40)
-                    ->url(fn ($record) => ($path = $record->thumbnail ?? (!empty($record->images) && is_array($record->images) ? $record->images[0] : null)) ? asset('storage/' . $path) : null)
-                    ->openUrlInNewTab(),
+                    ->extraImgAttributes(fn ($record) => [
+                        'class' => 'cursor-zoom-in hover:scale-105 transition duration-150',
+                        'x-on:click.prevent.stop' => ($path = $record->thumbnail ?? (!empty($record->images) && is_array($record->images) ? $record->images[0] : null)) 
+                            ? "\$dispatch('open-lightbox', { src: '" . asset('storage/' . $path) . "' })" 
+                            : "",
+                    ]),
                 TextColumn::make('client.name')
                     ->label(__('Client'))
                     ->wrap()
