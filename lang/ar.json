@@ -203,5 +203,8 @@
     "Yes, sync data": "نعم، مزامنة البيانات",
     "Create Model": "إضافة موديل",
     "Image": "الصورة",
-    "Thumbnail Image": "الصورة المصغرة"
+    "Thumbnail Image": "الصورة المصغرة",
+    "Scan Files": "ملفات السكان",
+    "SolidWorks Files": "ملفات سوليدووركس",
+    "File": "ملف"
 }

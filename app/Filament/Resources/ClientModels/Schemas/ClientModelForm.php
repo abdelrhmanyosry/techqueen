@@ -117,6 +117,22 @@ class ClientModelForm
                     ->placeholder(__('Select a thumbnail image'))
                     ->native(false)
                     ->columnSpanFull(),
+                FileUpload::make('scan_files')
+                    ->label(__('Scan Files'))
+                    ->disk('public')
+                    ->multiple()
+                    ->directory('scan-files')
+                    ->openable()
+                    ->downloadable()
+                    ->columnSpanFull(),
+                FileUpload::make('solidworks_files')
+                    ->label(__('SolidWorks Files'))
+                    ->disk('public')
+                    ->multiple()
+                    ->directory('solidworks-files')
+                    ->openable()
+                    ->downloadable()
+                    ->columnSpanFull(),
             ]);
     }
 }

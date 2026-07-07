@@ -10,6 +10,8 @@ class ClientModel extends Model
 
     protected $casts = [
         'images' => 'array',
+        'scan_files' => 'array',
+        'solidworks_files' => 'array',
     ];
 
     protected static function booted()

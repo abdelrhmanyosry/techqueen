@@ -66,6 +66,50 @@ class ClientModelsTable
                     })
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('scan_files')
+                    ->label(__('Scan Files'))
+                    ->html()
+                    ->formatStateUsing(function ($state, $record) {
+                        if (empty($record->scan_files) || !is_array($record->scan_files)) {
+                            return '<span class="text-gray-400 dark:text-gray-600 text-xs">-</span>';
+                        }
+                        
+                        $html = '<div class="flex flex-wrap gap-1">';
+                        foreach ($record->scan_files as $index => $path) {
+                            $url = asset('storage/' . $path);
+                            $filename = basename($path);
+                            $html .= '<a href="' . $url . '" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-800 hover:bg-blue-100 transition" onclick="event.stopPropagation();" title="' . e($filename) . '">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                ' . __('File') . ' ' . ($index + 1) . '
+                            </a>';
+                        }
+                        $html .= '</div>';
+                        
+                        return $html;
+                    })
+                    ->toggleable(isToggledHiddenByDefault: false),
+                TextColumn::make('solidworks_files')
+                    ->label(__('SolidWorks Files'))
+                    ->html()
+                    ->formatStateUsing(function ($state, $record) {
+                        if (empty($record->solidworks_files) || !is_array($record->solidworks_files)) {
+                            return '<span class="text-gray-400 dark:text-gray-600 text-xs">-</span>';
+                        }
+                        
+                        $html = '<div class="flex flex-wrap gap-1">';
+                        foreach ($record->solidworks_files as $index => $path) {
+                            $url = asset('storage/' . $path);
+                            $filename = basename($path);
+                            $html .= '<a href="' . $url . '" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400 border border-violet-100 dark:border-violet-800 hover:bg-violet-100 transition" onclick="event.stopPropagation();" title="' . e($filename) . '">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                ' . __('File') . ' ' . ($index + 1) . '
+                            </a>';
+                        }
+                        $html .= '</div>';
+                        
+                        return $html;
+                    })
+                    ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('receiving_date')
                     ->label(__('Receiving date'))
                     ->date()
