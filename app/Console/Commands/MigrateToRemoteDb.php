@@ -46,14 +46,9 @@ class MigrateToRemoteDb extends Command
             ]
         ]);
 
-        // 3. The target connection is the current default (which the user configured in .env to be mysql/remote)
-        $targetConnection = DB::getDefaultConnection();
+        // 3. The target connection is the remote pgsql connection
+        $targetConnection = 'pgsql';
         $this->info("Target connection is: {$targetConnection}");
-
-        if ($targetConnection === 'sqlite' || $targetConnection === 'sqlite_source') {
-            $this->error('Target connection is still SQLite. Please configure your remote database credentials (e.g. mysql) in your .env first!');
-            return 1;
-        }
 
         if (!$this->confirm('This will wipe all existing tables on the remote database and replace them with local SQLite data. Do you want to proceed?')) {
             $this->info('Migration cancelled.');

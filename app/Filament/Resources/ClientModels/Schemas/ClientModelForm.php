@@ -107,6 +107,7 @@ class ClientModelForm
                         }
                         
                         return collect($images)
+                            ->filter(fn ($path) => is_string($path))
                             ->mapWithKeys(fn ($path) => [
                                 $path => '<span class="flex items-center gap-2 py-1"><img src="' . asset('storage/' . $path) . '" class="w-8 h-8 rounded object-cover" /><span class="text-xs font-semibold text-gray-900 dark:text-gray-200">' . e(basename($path)) . '</span></span>'
                             ])
