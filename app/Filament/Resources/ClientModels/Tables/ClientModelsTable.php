@@ -9,6 +9,7 @@ use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\ViewColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Table;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Actions\BulkAction;
@@ -20,6 +21,14 @@ class ClientModelsTable
     {
         return $table
             ->columns([
+                ImageColumn::make('thumbnail')
+                    ->label(__('Image'))
+                    ->disk('public')
+                    ->state(fn ($record) => $record->thumbnail ?? (!empty($record->images) && is_array($record->images) ? $record->images[0] : null))
+                    ->square()
+                    ->size(40)
+                    ->url(fn ($record) => ($path = $record->thumbnail ?? (!empty($record->images) && is_array($record->images) ? $record->images[0] : null)) ? asset('storage/' . $path) : null)
+                    ->openUrlInNewTab(),
                  TextColumn::make('client.name')
                     ->label(__('Client'))
                     ->wrap()

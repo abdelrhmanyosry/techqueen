@@ -181,13 +181,22 @@
         <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-md overflow-hidden flex flex-col self-stretch min-w-[360px] md:w-[400px]">
     
     <div class="p-5 border-b border-gray-200 dark:border-gray-800 bg-gray-50/70 dark:bg-gray-950/40">
-        <div class="flex items-center justify-between gap-4">
-            <h3 class="text-base font-bold text-gray-900 dark:text-white tracking-tight">
-                {{ __('Schedules on Date') }}
-            </h3>
-            <span class="text-xs font-semibold text-gray-600 dark:text-gray-300 px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200/50 dark:border-gray-700/50 whitespace-nowrap">
-                {{ \Illuminate\Support\Carbon::parse($this->selectedDate)->translatedFormat('d M Y') }}
-            </span>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <h3 class="text-base font-bold text-gray-900 dark:text-white tracking-tight">
+                    {{ __('Schedules on Date') }}
+                </h3>
+                <span class="text-xs font-semibold text-gray-600 dark:text-gray-300 px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200/50 dark:border-gray-700/50 whitespace-nowrap">
+                    {{ \Illuminate\Support\Carbon::parse($this->selectedDate)->translatedFormat('d M Y') }}
+                </span>
+            </div>
+            <a 
+                href="{{ route('filament.admin.resources.models.create', ['delivery_date' => $this->selectedDate]) }}"
+                class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-white bg-primary-600 hover:bg-primary-500 rounded-lg shadow-sm transition duration-200 whitespace-nowrap"
+            >
+                <x-heroicon-m-plus class="w-4 h-4" style="width: 16px; height: 16px;" />
+                <span>{{ __('Create Model') }}</span>
+            </a>
         </div>
     </div>
 
@@ -200,9 +209,16 @@
                 <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-1">
                     {{ __('No Deliveries Scheduled') }}
                 </h4>
-                <p class="text-xs text-gray-500 dark:text-gray-400 max-w-[220px] leading-relaxed">
+                <p class="text-xs text-gray-500 dark:text-gray-400 max-w-[220px] leading-relaxed mb-4">
                     {{ __('There are no client model pieces due for delivery on this day.') }}
                 </p>
+                <a 
+                    href="{{ route('filament.admin.resources.models.create', ['delivery_date' => $this->selectedDate]) }}"
+                    class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-white bg-primary-600 hover:bg-primary-500 rounded-lg shadow-sm transition duration-200"
+                >
+                    <x-heroicon-m-plus class="w-4 h-4" style="width: 16px; height: 16px;" />
+                    <span>{{ __('Create Model') }}</span>
+                </a>
             </div>
         @else
             <div class="space-y-3.5">

@@ -50,6 +50,7 @@ class ClientModelForm
                     ->required(),
                 DatePicker::make('delivery_date')
                     ->label(__('Delivery date'))
+                    ->default(fn () => request()->query('delivery_date'))
                     ->required(),
                 TextInput::make('deposit')
                     ->label(__('Deposit'))
@@ -95,6 +96,25 @@ class ClientModelForm
                     ->image()
                     ->directory('model-images')
                     ->reorderable()
+                    ->live()
+                    ->columnSpanFull(),
+                Select::make('thumbnail')
+                    ->label(__('Thumbnail Image'))
+                    ->options(function (callable $get) {
+                        $images = $get('images');
+                        if (empty($images) || !is_array($images)) {
+                            return [];
+                        }
+                        
+                        return collect($images)
+                            ->mapWithKeys(fn ($path) => [
+                                $path => '<span class="flex items-center gap-2 py-1"><img src="' . asset('storage/' . $path) . '" class="w-8 h-8 rounded object-cover" /><span class="text-xs font-semibold text-gray-900 dark:text-gray-200">' . e(basename($path)) . '</span></span>'
+                            ])
+                            ->toArray();
+                    })
+                    ->allowHtml()
+                    ->placeholder(__('Select a thumbnail image'))
+                    ->native(false)
                     ->columnSpanFull(),
             ]);
     }
