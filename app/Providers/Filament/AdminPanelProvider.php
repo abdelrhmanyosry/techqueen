@@ -250,20 +250,20 @@ class AdminPanelProvider extends PanelProvider
                          x-on:open-lightbox.window="src = $event.detail.src; open = true"
                          x-show="open"
                          x-transition.opacity
-                         class="fixed inset-0 z-[100000] flex items-center justify-center bg-black/80 backdrop-blur-md"
+                         class="fixed inset-0 z-[100000] flex items-center justify-center bg-black/80 backdrop-blur-md cursor-zoom-out"
                          style="display: none;"
                          @click="open = false"
                          @keydown.escape.window="open = false"
                     >
-                        <div class="relative max-w-5xl max-h-[90vh] p-4 flex items-center justify-center" @click.stop>
+                        <div class="relative max-w-5xl max-h-[90vh] p-4 flex items-center justify-center pointer-events-none">
                             <!-- Close Button -->
-                            <button @click="open = false" class="absolute top-6 right-6 text-white/80 hover:text-white p-2 rounded-full bg-black/40 hover:bg-black/60 transition shadow-lg">
+                            <button @click="open = false" class="absolute top-6 right-6 text-white/80 hover:text-white p-2 rounded-full bg-black/40 hover:bg-black/60 transition shadow-lg pointer-events-auto" @click.stop>
                                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
                             <!-- Lightbox Image -->
-                            <img :src="src" class="max-w-full max-h-[85vh] rounded-lg shadow-2xl border border-white/10 object-contain animate-[zoom-in_0.2s_ease-out]" />
+                            <img :src="src" class="max-w-full max-h-[85vh] rounded-lg shadow-2xl border border-white/10 object-contain pointer-events-auto cursor-default animate-[zoom-in_0.2s_ease-out]" @click.stop />
                         </div>
                     </div>
 
