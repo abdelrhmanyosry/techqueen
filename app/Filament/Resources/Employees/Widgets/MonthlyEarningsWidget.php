@@ -44,9 +44,9 @@ class MonthlyEarningsWidget extends TableWidget
                 COUNT(*) as jobs_count, 
                 SUM(price) as total_revenue,
                 SUM((price * ?) / 100) as total_commission,
-                SUM(CASE WHEN employee_paid = 1 THEN (price * ?) / 100 ELSE 0 END) as paid_commission,
-                SUM(CASE WHEN employee_paid = 0 THEN (price * ?) / 100 ELSE 0 END) as unpaid_commission
-            ", [$this->record->commission_rate, $this->record->commission_rate, $this->record->commission_rate])
+                SUM(employee_paid_amount) as paid_commission,
+                SUM(((price * ?) / 100) - employee_paid_amount) as unpaid_commission
+            ", [$this->record->commission_rate, $this->record->commission_rate])
             ->groupByRaw($dateExpr);
 
         return $table
@@ -101,11 +101,15 @@ class MonthlyEarningsWidget extends TableWidget
                     ->modalHeading(__('Mark Month as Paid'))
                     ->modalDescription(__('Are you sure you want to mark all completed models in this month as paid to this employee?'))
                     ->action(function ($record, $livewire) use ($dateExpr) {
+                        $commissionRate = $this->record->commission_rate ?? 50;
                         ClientModel::query()
                             ->where('employee_id', $this->record->id)
                             ->whereIn('status', ['finished_paid', 'completed'])
                             ->whereRaw("{$dateExpr} = ?", [$record->month_year])
-                            ->update(['employee_paid' => true]);
+                            ->update([
+                                'employee_paid' => true,
+                                'employee_paid_amount' => \DB::raw("(price * " . (int)$commissionRate . ") / 100"),
+                            ]);
                             
                         $livewire->dispatch('refreshMonthlyEarnings');
                     }),

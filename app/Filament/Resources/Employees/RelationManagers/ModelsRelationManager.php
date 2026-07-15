@@ -77,9 +77,21 @@ class ModelsRelationManager extends RelationManager
                         'pending' => __('Pending'),
                         default => $state,
                     }),
-                \Filament\Tables\Columns\ToggleColumn::make('employee_paid')
+                TextColumn::make('employee_paid_amount')
                     ->label(__('Paid to Employee'))
+                    ->state(fn ($record) => session('hide_prices', false) ? '***' : ($record->employee_paid_amount ?? 0))
+                    ->formatStateUsing(fn ($state) => $state === '***' ? '***' : number_format((float)$state, 0) . ' ' . __('EGP'))
+                    ->color(fn ($record) => $record->employee_paid ? 'success' : (($record->employee_paid_amount ?? 0) > 0 ? 'warning' : 'gray')),
+                \Filament\Tables\Columns\ToggleColumn::make('employee_paid')
+                    ->label(__('Fully Paid'))
                     ->disabled(fn ($record) => !in_array($record->status, ['finished_paid', 'completed']))
+                    ->updateStateUsing(function ($record, $state) {
+                        $commission = $state ? (int)(($record->price * ($this->getOwnerRecord()->commission_rate ?? 50)) / 100) : 0;
+                        $record->update([
+                            'employee_paid' => $state,
+                            'employee_paid_amount' => $commission,
+                        ]);
+                    })
                     ->afterStateUpdated(function ($livewire) {
                         $livewire->dispatch('refreshMonthlyEarnings');
                     }),
@@ -88,7 +100,91 @@ class ModelsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                //
+                \Filament\Actions\Action::make('recordPayment')
+                    ->label(__('Record Payment'))
+                    ->icon('heroicon-o-currency-dollar')
+                    ->color('success')
+                    ->form([
+                        TextInput::make('amount')
+                            ->label(__('Amount Paid'))
+                            ->numeric()
+                            ->required()
+                            ->minValue(1)
+                            ->suffix(__('EGP')),
+                    ])
+                    ->modalDescription(function () {
+                        $employee = $this->getOwnerRecord();
+                        $commissionRate = $employee->commission_rate ?? 50;
+                        
+                        $unpaidCommission = \App\Models\ClientModel::query()
+                            ->where('employee_id', $employee->id)
+                            ->whereIn('status', ['finished_paid', 'completed'])
+                            ->get()
+                            ->sum(function ($model) use ($commissionRate) {
+                                $totalCommission = (int) (($model->price * $commissionRate) / 100);
+                                return $totalCommission - ($model->employee_paid_amount ?? 0);
+                            });
+
+                        return __('Total unpaid commission owed to this employee: :amount EGP', [
+                            'amount' => number_format($unpaidCommission, 0)
+                        ]);
+                    })
+                    ->action(function (array $data, $livewire) {
+                        $amount = (int) $data['amount'];
+                        $employee = $this->getOwnerRecord();
+                        $commissionRate = $employee->commission_rate ?? 50;
+
+                        // Fetch completed models that are unpaid or partially paid
+                        $models = \App\Models\ClientModel::query()
+                            ->where('employee_id', $employee->id)
+                            ->whereIn('status', ['finished_paid', 'completed'])
+                            ->where(function ($query) use ($commissionRate) {
+                                $query->where('employee_paid', false)
+                                      ->orWhereRaw('employee_paid_amount < (price * ?) / 100', [$commissionRate]);
+                            })
+                            ->orderBy('completed_at')
+                            ->orderBy('id')
+                            ->get();
+
+                        $totalDistributed = 0;
+                        foreach ($models as $model) {
+                            if ($amount <= 0) {
+                                break;
+                            }
+
+                            $totalCommission = (int) (($model->price * $commissionRate) / 100);
+                            $alreadyPaid = $model->employee_paid_amount ?? 0;
+                            $remaining = $totalCommission - $alreadyPaid;
+
+                            if ($remaining <= 0) {
+                                continue;
+                            }
+
+                            if ($amount >= $remaining) {
+                                $model->update([
+                                    'employee_paid_amount' => $totalCommission,
+                                    'employee_paid' => true,
+                                ]);
+                                $amount -= $remaining;
+                                $totalDistributed += $remaining;
+                            } else {
+                                $model->update([
+                                    'employee_paid_amount' => $alreadyPaid + $amount,
+                                    'employee_paid' => false,
+                                ]);
+                                $totalDistributed += $amount;
+                                $amount = 0;
+                            }
+                        }
+
+                        $livewire->dispatch('refreshMonthlyEarnings');
+                        
+                        \Filament\Notifications\Notification::make()
+                            ->title(__('Payment Recorded Successfully'))
+                            ->body(__('Distributed :distributed EGP among employee models.', ['distributed' => number_format($totalDistributed, 0)]))
+                            ->success()
+                            ->send();
+                    }),
             ])
             ->recordActions([
                 \Filament\Actions\Action::make('reassign')

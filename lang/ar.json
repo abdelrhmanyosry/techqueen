@@ -210,5 +210,12 @@
     "Model Details": "تفاصيل الموديل",
     "No scan files uploaded.": "لم يتم رفع ملفات سكان.",
     "No SolidWorks files uploaded.": "لم يتم رفع ملفات سوليدووركس.",
-    "Download": "تحميل"
+    "Download": "تحميل",
+    "Record Payment": "تسجيل دفعة للموظف",
+    "Amount Paid": "المبلغ المدفوع",
+    "Total unpaid commission owed to this employee: :amount EGP": "إجمالي عمولة الموظف غير المدفوعة: :amount ج.م",
+    "Payment Recorded Successfully": "تم تسجيل الدفعة بنجاح",
+    "Distributed :distributed EGP among employee models.": "تم توزيع :distributed ج.م على موديلات الموظف.",
+    "Paid to Employee": "مدفوع للموظف",
+    "Fully Paid": "مدفوع بالكامل"
 }

@@ -28,7 +28,6 @@
         x-ref="button"
         type="button"
         @click.stop="open = !open; if (open) $dispatch('close-other-dropdowns', { id: {{ $record->id }} })"
-        @click.away="open = false"
         @class([
             'inline-flex items-center gap-1.5 text-xs font-bold rounded-lg px-2.5 py-1.5 ring-1 ring-inset transition cursor-pointer',
             $statusClasses[$status] ?? 'bg-gray-50 text-gray-600 ring-gray-500/10',
@@ -40,37 +39,40 @@
     </button>
 
     <!-- Dropdown Menu -->
-    <div 
-        x-show="open"
-        x-transition
-        x-anchor.bottom-start="$refs.button"
-        class="fixed z-50 w-48 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-lg py-1.5 text-xs"
-        style="display: none;"
-    >
-        @foreach ($statusLabels as $statusKey => $statusVal)
-            <button 
-                type="button"
-                wire:click="updateStatus({{ $record->id }}, '{{ $statusKey }}')"
-                @click.stop="open = false"
-                class="flex items-center gap-2 w-full text-start px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition text-gray-700 dark:text-gray-300 font-semibold"
-            >
-                @php
-                    $dotColor = match ($statusKey) {
-                        'finished_paid' => 'bg-emerald-500',
-                        'finished_unpaid' => 'bg-amber-500',
-                        'paid_unfinished' => 'bg-sky-500',
-                        'in_progress' => 'bg-blue-500',
-                        'canceled' => 'bg-rose-500',
-                        'on_hold' => 'bg-gray-400',
-                        default => 'bg-gray-400',
-                    };
-                @endphp
-                <span class="w-2 h-2 rounded-full {{ $dotColor }}"></span>
-                <span>{{ $statusVal }}</span>
-                @if ($status === $statusKey)
-                    <x-heroicon-m-check class="w-3.5 h-3.5 ml-auto text-primary-500" style="width: 14px; height: 14px;" />
-                @endif
-            </button>
-        @endforeach
-    </div>
+    <template x-teleport="body">
+        <div 
+            x-show="open"
+            x-transition
+            x-anchor.bottom-start="$refs.button"
+            @click.outside="open = false"
+            class="absolute z-50 w-48 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-lg py-1.5 text-xs"
+            style="display: none;"
+        >
+            @foreach ($statusLabels as $statusKey => $statusVal)
+                <button 
+                    type="button"
+                    wire:click="updateStatus({{ $record->id }}, '{{ $statusKey }}')"
+                    @click.stop="open = false"
+                    class="flex items-center gap-2 w-full text-start px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800/60 transition text-gray-700 dark:text-gray-300 font-semibold"
+                >
+                    @php
+                        $dotColor = match ($statusKey) {
+                            'finished_paid' => 'bg-emerald-500',
+                            'finished_unpaid' => 'bg-amber-500',
+                            'paid_unfinished' => 'bg-sky-500',
+                            'in_progress' => 'bg-blue-500',
+                            'canceled' => 'bg-rose-500',
+                            'on_hold' => 'bg-gray-400',
+                            default => 'bg-gray-400',
+                        };
+                    @endphp
+                    <span class="w-2 h-2 rounded-full {{ $dotColor }}"></span>
+                    <span>{{ $statusVal }}</span>
+                    @if ($status === $statusKey)
+                        <x-heroicon-m-check class="w-3.5 h-3.5 ml-auto text-primary-500" style="width: 14px; height: 14px;" />
+                    @endif
+                </button>
+            @endforeach
+        </div>
+    </template>
 </div>
