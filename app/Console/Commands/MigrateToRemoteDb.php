@@ -112,8 +112,8 @@ class MigrateToRemoteDb extends Command
             // Clear target table first to avoid duplicate keys (e.g. from migrations)
             DB::connection($targetConnection)->table($tableName)->delete();
 
-            // Fetch records from SQLite
-            $records = DB::connection('sqlite_source')->table($tableName)->get();
+            // Fetch records from source database
+            $records = DB::connection($sourceConnection)->table($tableName)->get();
 
             if ($records->isEmpty()) {
                 $this->info("Table {$tableName} is empty, skipping.");
