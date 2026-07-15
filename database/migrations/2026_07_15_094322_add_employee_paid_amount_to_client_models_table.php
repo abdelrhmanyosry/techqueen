@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('client_models', function (Blueprint $table) {
-            $table->integer('employee_paid_amount')->default(0)->after('employee_paid');
+            $table->integer('employee_paid_amount')->default(0);
         });
 
         // Update existing records
         try {
-            $models = \DB::table('client_models')
+            $models = \DB::connection($this->getConnection())->table('client_models')
                 ->join('employees', 'client_models.employee_id', '=', 'employees.id')
                 ->where('client_models.employee_paid', true)
                 ->select('client_models.id', 'client_models.price', 'employees.commission_rate')
@@ -25,7 +25,7 @@ return new class extends Migration
 
             foreach ($models as $model) {
                 $commission = (int) (($model->price * ($model->commission_rate ?? 50)) / 100);
-                \DB::table('client_models')
+                \DB::connection($this->getConnection())->table('client_models')
                     ->where('id', $model->id)
                     ->update(['employee_paid_amount' => $commission]);
             }

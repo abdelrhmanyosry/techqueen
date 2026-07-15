@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('client_models', function (Blueprint $table) {
-            $table->text('scan_files')->nullable()->after('images');
-            $table->text('solidworks_files')->nullable()->after('scan_files');
+            $table->text('scan_files')->nullable();
+            $table->text('solidworks_files')->nullable();
         });
     }
 
