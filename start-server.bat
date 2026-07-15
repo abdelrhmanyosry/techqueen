@@ -26,8 +26,16 @@ echo   Office Wi-Fi Address:    http://%LOCAL_IP%:8000/admin
 echo ---------------------------------------------------
 echo.
 
-:: Launch the browser automatically on the server computer
-start http://localhost:8000/admin
+:: Launch the browser automatically in App Mode (borderless desktop app style) on the server computer
+if exist "%ProgramFiles%\Google\Chrome\Application\chrome.exe" (
+    start "" "%ProgramFiles%\Google\Chrome\Application\chrome.exe" --app=http://localhost:8000/admin
+) else if exist "%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe" (
+    start "" "%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe" --app=http://localhost:8000/admin
+) else if exist "%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe" (
+    start "" "%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe" --app=http://localhost:8000/admin
+) else (
+    start http://localhost:8000/admin
+)
 
 :: Start PHP artisan scheduler in the background
 start /B php artisan schedule:work
